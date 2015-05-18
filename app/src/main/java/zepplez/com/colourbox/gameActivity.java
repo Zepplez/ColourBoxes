@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +37,7 @@ public class gameActivity extends ActionBarActivity {
         mColorGridView = (GridView)findViewById(R.id.colorGrid);
         mColorGridView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         mColorGridView.setOnItemClickListener(mOnItemClickListener);
+        mColorGridView.setNumColumns((int) Math.sqrt(getGridSize(mLevel)));
 
         populateLevel();
 
@@ -43,15 +45,13 @@ public class gameActivity extends ActionBarActivity {
         mColorGridView.setAdapter(adapter);
 
         levelNumber = (TextView)findViewById(R.id.scoreTextView);
-
-
     }
 
     private void populateLevel() {
         mBoxes.clear();
         Random rnd = new Random();
 
-        correctNumber = rnd.nextInt(getGridSize(mLevel) - 0);
+        correctNumber = rnd.nextInt(getGridSize(mLevel) - 1) + 1;
 
         int levelColour = levelColour();
 
@@ -92,11 +92,12 @@ public class gameActivity extends ActionBarActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if(position == correctNumber - 1){
                 //Next Level
+                mLevel++;
                 populateLevel();
                 BoxColourAdapter adapter = new BoxColourAdapter(gameActivity.this, mBoxes, mLevel, getBoxSize(mLevel));
                 mColorGridView.setAdapter(adapter);
-                mLevel++;
                 levelNumber.setText(Integer.toString(mLevel));
+                mColorGridView.setNumColumns((int) Math.sqrt(getGridSize(mLevel)));
             } else {
                 //Nothing
             }
@@ -106,13 +107,13 @@ public class gameActivity extends ActionBarActivity {
     public int getGridSize(int level){
         int gridSize=9;
 
-        if(1 < level && level < 4){
+        if(1 <= level && level < 5){
             gridSize = 9;
         } else if (5 <= level && level < 10){
             gridSize = 16;
-        } else if (11 <= level && level < 20){
+        } else if (10 <= level && level < 20){
             gridSize = 25;
-        } else if (21 <= level && level < 40){
+        } else if (20 <= level && level < 40){
             gridSize = 36;
         }
 
@@ -120,16 +121,16 @@ public class gameActivity extends ActionBarActivity {
     }
 
     public int getBoxSize(int level){
-        int boxSize=120;
+        int boxSize=0;
 
-        if(1 < level && level < 4){
-            boxSize = 10000;
+        if(1 <= level && level < 5){
+            boxSize = 400;
         } else if (5 <= level && level < 10){
-            boxSize = 100;
-        } else if (11 <= level && level < 20){
-            boxSize = 75;
-        } else if (21 <= level && level < 40){
-            boxSize = 50;
+            boxSize = 300;
+        } else if (10 <= level && level < 20){
+            boxSize = 240;
+        } else if (20 <= level && level < 40){
+            boxSize = 200;
         }
 
         return boxSize;
