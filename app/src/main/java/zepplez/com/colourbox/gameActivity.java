@@ -3,6 +3,7 @@ package zepplez.com.colourbox;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
+import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +30,29 @@ public class gameActivity extends ActionBarActivity {
     protected int correctNumber = 1;
     protected int colourLevel = 1;
     protected TextView levelNumber;
+    protected TextView timerTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        timerTextView = (TextView)findViewById(R.id.timerTextView);
+
+        CountDownTimer gameTimer = new CountDownTimer(60000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timerTextView.setText(millisUntilFinished/1000 + "");
+            }
+
+            @Override
+            public void onFinish() {
+                final Toast toast = Toast.makeText(getApplicationContext(), "Finished!", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        };
+
+        gameTimer.start();
 
         mColorGridView = (GridView)findViewById(R.id.colorGrid);
         mColorGridView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -45,6 +65,8 @@ public class gameActivity extends ActionBarActivity {
         mColorGridView.setAdapter(adapter);
 
         levelNumber = (TextView)findViewById(R.id.scoreTextView);
+
+
     }
 
     private void populateLevel() {
@@ -161,7 +183,7 @@ public class gameActivity extends ActionBarActivity {
                 levelColour = Color.parseColor("#8BC34A");  //Light Green
                 break;
             case 7:
-                levelColour = Color.parseColor("#536DFE");  //Indigo
+                levelColour = Color.parseColor("#E91E63");  //Hot Pink
                 break;
             case 8:
                 levelColour = Color.parseColor("#FFA000");  //Amber
