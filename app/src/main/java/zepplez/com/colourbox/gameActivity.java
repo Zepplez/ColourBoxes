@@ -1,5 +1,6 @@
 package zepplez.com.colourbox;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
@@ -7,6 +8,7 @@ import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +42,8 @@ public class gameActivity extends ActionBarActivity {
 
         timerTextView = (TextView)findViewById(R.id.timerTextView);
 
+        final LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+
         CountDownTimer gameTimer = new CountDownTimer(60000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -47,8 +52,8 @@ public class gameActivity extends ActionBarActivity {
 
             @Override
             public void onFinish() {
-                final Toast toast = Toast.makeText(getApplicationContext(), "Finished!", Toast.LENGTH_LONG);
-                toast.show();
+                View popupView = layoutInflater.inflate(R.layout.endgamepopup, null);
+                final PopupWindow popupWindow = new PopupWindow(popupView, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
             }
         };
 
