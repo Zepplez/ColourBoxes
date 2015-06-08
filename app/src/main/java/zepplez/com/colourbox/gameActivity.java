@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.CountDownTimer;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -34,6 +36,10 @@ public class gameActivity extends ActionBarActivity {
     protected int colourLevel = 1;
     protected TextView levelNumber;
     protected TextView timerTextView;
+    protected TextView finalScreenScore;
+    protected TextView highScore;
+    protected int mhighScore;
+    protected Button tryAgainButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +50,41 @@ public class gameActivity extends ActionBarActivity {
 
         final LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
 
-        CountDownTimer gameTimer = new CountDownTimer(60000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                timerTextView.setText(millisUntilFinished/1000 + "");
-            }
+        final CountDownTimer gameTimer = new CountDownTimer(10000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    timerTextView.setText(millisUntilFinished/1000 + "");
+                }
 
             @Override
             public void onFinish() {
+                retry();
+            }
+            private void retry() {
                 View popupView = layoutInflater.inflate(R.layout.endgamepopup, null);
-                final PopupWindow popupWindow = new PopupWindow(popupView, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
+                final PopupWindow popupWindow = new PopupWindow(popupView, ViewPager.LayoutParams.WRAP_CONTENT, ViewPager.LayoutParams.WRAP_CONTENT);
+                popupWindow.showAtLocation(mColorGridView, 4, 59, 1);
+                finalScreenScore = (TextView)popupView.findViewById(R.id.finalScoreTextView);
+                highScore = (TextView)popupView.findViewById(R.id.highScore);
+                finalScreenScore.setText(mLevel+"");
+                highScore.setText(getHighScore(mhighScore, mLevel)+"");
+                tryAgainButton = (Button)popupView.findViewById(R.id.retryButton);
+                tryAgainButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mBoxes.clear();
+                        mLevel=1;
+                        popupWindow.dismiss();
+
+                        populateLevel();
+
+                        BoxColourAdapter adapter = new BoxColourAdapter(gameActivity.this, mBoxes, mLevel, getBoxSize(mLevel));
+                        mColorGridView.setAdapter(adapter);
+
+                        mColorGridView.setEnabled(true);
+                    }
+                });
+                mColorGridView.setEnabled(false);
             }
         };
 
@@ -84,7 +115,7 @@ public class gameActivity extends ActionBarActivity {
 
         for(int i=1; i<getGridSize(mLevel); i++){
             if(i == correctNumber){
-                ColourBoxes correctBox = new ColourBoxes(levelColour-2800);
+                ColourBoxes correctBox = new ColourBoxes(levelColour-getLevelDifficulty(mLevel));
                 mBoxes.add(correctBox);
             }
             ColourBoxes correctBox = new ColourBoxes(levelColour);
@@ -163,6 +194,22 @@ public class gameActivity extends ActionBarActivity {
         return boxSize;
     }
 
+    public int getLevelDifficulty(int level){
+        int difficulty=0;
+
+        if(1 <= level && level < 5){
+            difficulty = 4000;
+        } else if (5 <= level && level < 10){
+            difficulty = 3500;
+        } else if (10 <= level && level < 20){
+            difficulty = 3000;
+        } else if (20 <= level && level < 40){
+            difficulty = 2800;
+        }
+
+        return difficulty;
+    }
+
     public int levelColour(){
         int levelColour = 0;
         Random rnd2 = new Random();
@@ -215,5 +262,16 @@ public class gameActivity extends ActionBarActivity {
 
 
         return levelColour;
+    }
+
+    public int getHighScore(int highScore, int currLevel){
+
+        if (currLevel <= highScore){
+            highScore = highScore;
+        } else {
+            highScore = currLevel;
+        }
+
+        return highScore;
     }
 }
