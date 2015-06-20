@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -29,8 +30,8 @@ class BoxColourAdapter extends ArrayAdapter<ColourBoxes> {
         mSize = size;
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+  @Override
+  public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
 
         if (convertView == null) {
@@ -46,8 +47,11 @@ class BoxColourAdapter extends ArrayAdapter<ColourBoxes> {
 
         holder.boxLayout.setBackgroundColor(box.mColour);
         ViewGroup.LayoutParams params = holder.boxLayout.getLayoutParams();
-        params.height = mSize;
-        params.width = mSize;
+
+      params.height = mSize;
+      params.width = params.height;
+
+
         return convertView;
     }
 

@@ -40,6 +40,7 @@ public class gameActivity extends ActionBarActivity {
     protected TextView highScore;
     protected int mhighScore;
     protected Button tryAgainButton;
+    protected int HighScoreSaved;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class gameActivity extends ActionBarActivity {
 
         final LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
 
-        final CountDownTimer gameTimer = new CountDownTimer(10000, 1000) {
+        final CountDownTimer gameTimer = new CountDownTimer(60000, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     timerTextView.setText(millisUntilFinished/1000 + "");
@@ -67,7 +68,8 @@ public class gameActivity extends ActionBarActivity {
                 finalScreenScore = (TextView)popupView.findViewById(R.id.finalScoreTextView);
                 highScore = (TextView)popupView.findViewById(R.id.highScore);
                 finalScreenScore.setText(mLevel+"");
-                highScore.setText(getHighScore(mhighScore, mLevel)+"");
+                HighScoreSaved = getHighScore(HighScoreSaved, mLevel);
+                highScore.setText(HighScoreSaved+"");
                 tryAgainButton = (Button)popupView.findViewById(R.id.retryButton);
                 tryAgainButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -77,9 +79,23 @@ public class gameActivity extends ActionBarActivity {
                         popupWindow.dismiss();
 
                         populateLevel();
+                        final CountDownTimer gameTimer = new CountDownTimer(60000, 1000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                timerTextView.setText(millisUntilFinished / 1000 + "");
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                retry();
+                            }
+                        };
+                        gameTimer.start();
 
                         BoxColourAdapter adapter = new BoxColourAdapter(gameActivity.this, mBoxes, mLevel, getBoxSize(mLevel));
                         mColorGridView.setAdapter(adapter);
+                        levelNumber.setText(Integer.toString(mLevel));
+                        mColorGridView.setNumColumns((int) Math.sqrt(getGridSize(mLevel)));
 
                         mColorGridView.setEnabled(true);
                     }
@@ -173,6 +189,10 @@ public class gameActivity extends ActionBarActivity {
             gridSize = 25;
         } else if (20 <= level && level < 40){
             gridSize = 36;
+        } else if (40 <= level && level < 60){
+            gridSize = 49;
+        } else if (60 <= level && level < 80){
+            gridSize = 64;
         }
 
         return gridSize;
@@ -189,6 +209,10 @@ public class gameActivity extends ActionBarActivity {
             boxSize = 240;
         } else if (20 <= level && level < 40){
             boxSize = 200;
+        } else if (40 <= level && level < 60){
+            boxSize = 171;
+        } else if (60 <= level && level < 80){
+            boxSize = 150;
         }
 
         return boxSize;
@@ -198,13 +222,17 @@ public class gameActivity extends ActionBarActivity {
         int difficulty=0;
 
         if(1 <= level && level < 5){
-            difficulty = 4000;
+            difficulty = 5000;
         } else if (5 <= level && level < 10){
             difficulty = 3500;
         } else if (10 <= level && level < 20){
             difficulty = 3000;
         } else if (20 <= level && level < 40){
             difficulty = 2800;
+        } else if (40 <= level && level < 60){
+            difficulty = 1500;
+        } else if (60 <= level && level < 80){
+            difficulty = 700;
         }
 
         return difficulty;
@@ -264,10 +292,11 @@ public class gameActivity extends ActionBarActivity {
         return levelColour;
     }
 
-    public int getHighScore(int highScore, int currLevel){
+    public int getHighScore(int oldhighScore, int currLevel){
+    int highScore = 0;
 
-        if (currLevel <= highScore){
-            highScore = highScore;
+        if (currLevel <= oldhighScore){
+            highScore = oldhighScore;
         } else {
             highScore = currLevel;
         }
