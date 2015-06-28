@@ -106,6 +106,8 @@ public class gameActivity extends ActionBarActivity {
 
         gameTimer.start();
 
+
+
         mColorGridView = (GridView)findViewById(R.id.colorGrid);
         mColorGridView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         mColorGridView.setOnItemClickListener(mOnItemClickListener);
